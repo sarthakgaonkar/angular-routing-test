@@ -21,6 +21,6 @@ RUN npm run build
 FROM public.ecr.aws/nginx/nginx:latest
 
 # Copy the build output to replace the default nginx contents.
-COPY --from=build /app/dist/* /usr/share/nginx/html/
+COPY --from=build /app/dist/angular-proj-1/* /usr/share/nginx/html/
 
 RUN ls /usr/share/nginx/html/
