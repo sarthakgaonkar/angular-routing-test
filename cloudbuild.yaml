@@ -1,33 +1,11 @@
 steps:
-  # Step 1: Fetch JSON parameter from Parameter Manager
-  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
-    id: Fetch JSON Parameter
-    entrypoint: bash
-    args:
-      - "-c"
-      - |
-        echo "Fetching JSON parameter..."
-        JSON_VALUE=$(gcloud parameters versions get latest \
-          --name="projects/$PROJECT_ID/locations/global/parameters/MY_JSON_PARAM" \
-          --format="value(value)")
-
-        echo "Encoding JSON..."
-        echo "$JSON_VALUE" | base64 -w0 > json.b64
-
-        echo "Encoded JSON stored in json.b64"
-
-  # Step 2: Build Docker image with build-arg
+  # Build docker image
   - name: gcr.io/cloud-builders/docker
-    id: Docker Build
-    entrypoint: bash
     args:
-      - "-c"
-      - |
-        JSON_B64=$(cat json.b64)
-        docker build \
-          --build-arg JSON_B64="$JSON_B64" \
-          -t test-angular-image \
-          .
+      - build
+      - -t
+      - gcr.io/$PROJECT_ID/angular-app
+      - .
 
-options:
-  logging: CLOUD_LOGGING_ONLY
+images:
+  - gcr.io/$PROJECT_ID/angular-app
