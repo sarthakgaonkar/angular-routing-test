@@ -9,11 +9,11 @@ FROM mirror.gcr.io/library/node:18 AS build
 #     && echo "$JSON_B64" | base64 -d > /app/config.json \
 #     && cat /app/config.json
 
-WORKDIR /app
+WORKDIR /app/
 
-COPY package*.json /app
+COPY package*.json /app/
 RUN npm install --force
-COPY . /app
+COPY . /app/
 RUN npm run build
 
 
