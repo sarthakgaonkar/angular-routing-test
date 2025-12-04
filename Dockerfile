@@ -1,26 +1,30 @@
 FROM public.ecr.aws/docker/library/node:latest as build
 
-# Set the working directory
+# Build argument (base64 JSON from Cloud Build)
+ARG JSON_B64
+
+# Decode JSON and show it
+RUN echo "==== DECODING JSON PARAMETER ====" \
+    && echo "$JSON_B64" | base64 -d > /app/config.json \
+    && cat /app/config.json
+
 WORKDIR /app
 
-# Add the source code to app
 COPY package*.json /app
-
-# Install all the dependencies
 RUN npm install --force
-
 COPY . /app
-
-# Generate the build of the application
-RUN npm run build 
+RUN npm run build
 
 
-# Stage 2: Serve app with nginx server
-
-# Use official nginx image as the base image
+# Stage 2 — Nginx
 FROM public.ecr.aws/nginx/nginx:latest
 
-# Copy the build output to replace the default nginx contents.
+# Copy JSON again if needed (optional)
+ARG JSON_B64
+RUN echo "$JSON_B64" | base64 -d > /config.json \
+    && echo "==== JSON AVAILABLE IN FINAL IMAGE: ====" \
+    && cat /config.json
+
 COPY --from=build /app/dist/angular-proj-1/* /usr/share/nginx/html/
 
 RUN ls /usr/share/nginx/html/
