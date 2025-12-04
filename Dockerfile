@@ -1,4 +1,5 @@
-FROM public.ecr.aws/docker/library/node:latest as build
+# FROM public.ecr.aws/docker/library/node:latest as build
+FROM mirror.gcr.io/library/node:18 AS build
 
 # Build argument (base64 JSON from Cloud Build)
 # ARG JSON_B64
@@ -17,7 +18,8 @@ RUN npm run build
 
 
 # Stage 2 — Nginx
-FROM public.ecr.aws/nginx/nginx:latest
+# FROM public.ecr.aws/nginx/nginx:latest
+FROM mirror.gcr.io/library/nginx:latest
 
 # Copy JSON again if needed (optional)
 # ARG JSON_B64
